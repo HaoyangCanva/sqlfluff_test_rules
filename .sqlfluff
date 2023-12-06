@@ -1,0 +1,49 @@
+[sqlfluff]
+verbose = 1
+nocolor = False
+dialect = snowflake
+templater = jinja
+exclude_rules = L007,L016,L031,L034,L022,L051 
+output_line_length = 200
+runaway_limit = 10
+ignore_templated_areas = True
+encoding = 'utf-8'
+format = 'human'
+# Comma separated list of file extensions to lint.
+# NB: This config will only apply in the root folder.
+sql_file_exts = .sql,.sql.j2,.dml,.ddl
+ignore = parsing,templating
+
+
+[sqlfluff:indentation]
+indented_joins = False
+template_blocks_indent = True
+
+[sqlfluff:templater]
+unwrap_wrapped_queries = False
+
+[sqlfluff:templater:jinja:macros]
+#Macros provided as builtins for dbt projects
+dbt_ref = {% macro ref(model_ref) %}{{model_ref}}{% endmacro %}
+dbt_source = {% macro source(source_name, table) %}{{source_name}}_{{table}}{% endmacro %}
+dbt_config = {% macro config() %}{% for k in kwargs %}{% endfor %}{% endmacro %}
+dbt_var = {% macro var(variable) %}item{% endmacro %}
+dbt_is_incremental = {% macro is_incremental() %}False{% endmacro %}
+
+# See this document for a reference to our specific rules: https://canvadev.atlassian.net/wiki/spaces/DE/pages/2560296397/How+To+Lint+And+Format+SQL+s+In+The+Data+Warehouse
+# Some rules can be configured directly from the config common to other rules.
+[sqlfluff:rules]
+tab_space_size = 2
+max_line_length = 120
+indent_unit = space
+comma_style = trailing
+allow_scalar = True
+single_table_references = consistent
+unquoted_identifiers_policy = all
+
+# Some rules have their own specific config.
+
+# TODO: this rule doesn't output any errors when used via the api, investigate why
+# [sqlfluff:rules:L029]  # Keyword identifiers
+# unquoted_identifiers_policy = all
+# ignore_words = value
